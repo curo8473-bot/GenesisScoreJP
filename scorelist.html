@@ -18,6 +18,15 @@
       font-size: 16px;
       margin-bottom: 10px;
     }
+    button {
+      padding: 8px 16px;
+      font-size: 16px;
+      margin-left: 10px;
+    }
+    #sortStatus {
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
     table {
       border-collapse: collapse;
       width: 100%;
@@ -30,18 +39,20 @@
     }
     th {
       background: #eee;
-      cursor: pointer;
     }
   </style>
 </head>
 <body>
   <h1>遊戯王Genesys点数表(日本語) 2025/9/25版</h1>
+
   <input type="text" id="filterInput" placeholder="カード名で検索...">
-  <label><input type="checkbox" id="sortCheckbox"> 点数で昇順に並べる</label>
+  <button id="sortToggleBtn">点数で昇順に並べる</button>
+
+  <div id="sortStatus">現在の並び順：五十音順</div>
 
   <table id="scoreTable">
     <thead>
-      <tr><th>カード名</th><th id="scoreHeader">点数</th></tr>
+      <tr><th>カード名</th><th>点数</th></tr>
     </thead>
     <tbody id="tableBody">
       <!-- JavaScriptで挿入される -->
@@ -49,8 +60,7 @@
   </table>
 
   <script>
-    const cardData = {
-"古代の機械像": 33,
+    const cardData = {"古代の機械像": 33,
 "赫の聖女カルテシア": 3,
 "アルカナフォースⅩⅩⅠ－THE WORLD": 100,
 "アストラル・クリボー": 3,
@@ -590,42 +600,46 @@
     };
 
     const tableBody = document.getElementById('tableBody');
-    let sortAscending = true;
+    const sortStatus = document.getElementById('sortStatus');
+    let sortByScore = false;
 
     function renderTable(filter = '') {
       tableBody.innerHTML = '';
       let entries = Object.entries(cardData);
 
+      // フィルター
       entries = entries.filter(([name]) => name.includes(filter));
 
-      const sortChecked = document.getElementById('sortCheckbox').checked;
-      if (sortChecked || !sortAscending) {
-        entries.sort((a, b) => sortAscending ? a[1] - b[1] : b[1] - a[1]);
+      // 並び順
+      if (sortByScore) {
+        entries.sort((a, b) => a[1] - b[1]);
+        sortStatus.textContent = '現在の並び順：点数昇順';
+      } else {
+        entries.sort((a, b) => a[0].localeCompare(b[0], 'ja'));
+        sortStatus.textContent = '現在の並び順：五十音順';
       }
 
+      // 表描画
       entries.forEach(([name, score]) => {
         const row = `<tr><td>${name}</td><td>${score}</td></tr>`;
         tableBody.innerHTML += row;
       });
     }
 
+    // 検索イベント
     document.getElementById('filterInput').addEventListener('input', function() {
       const keyword = this.value.trim();
       renderTable(keyword);
     });
 
-    document.getElementById('sortCheckbox').addEventListener('change', function() {
-      const keyword = document.getElementById('filterInput').value.trim();
-      sortAscending = true;
-      renderTable(keyword);
-    });
-
-    document.getElementById('scoreHeader').addEventListener('click', function() {
-      sortAscending = !sortAscending;
+    // 並び順切り替えボタン
+    document.getElementById('sortToggleBtn').addEventListener('click', function() {
+      sortByScore = !sortByScore;
       const keyword = document.getElementById('filterInput').value.trim();
       renderTable(keyword);
     });
 
+    // 初期表示
     renderTable();
   </script>
 </body>
