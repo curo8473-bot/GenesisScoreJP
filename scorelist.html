@@ -48,7 +48,7 @@
   <input type="text" id="filterInput" placeholder="カード名で検索...">
   <button id="sortToggleBtn">点数で昇順に並べる</button>
 
-  <div id="sortStatus">現在の並び順：UNICODE順</div>
+  <div id="sortStatus">現在の並び順：Unicode順</div>
 
   <table id="scoreTable">
     <thead>
@@ -603,7 +603,7 @@
     const tableBody = document.getElementById('tableBody');
     const sortStatus = document.getElementById('sortStatus');
     const sortToggleBtn = document.getElementById('sortToggleBtn');
-    let sortByScore = false; // 初期状態：UNICODE順
+    let sortByScore = false; // 初期状態：Unicode順
 
     function renderTable(filter = '') {
       tableBody.innerHTML = '';
@@ -612,9 +612,9 @@
       entries = entries.filter(([name]) => name.includes(filter));
 
       if (sortByScore) {
-        entries.sort((a, b) => a[1] - b[1]);
+        entries.sort((a, b) => a[1] - b[1]); // 点数昇順
       } else {
-        entries.sort((a, b) => a[0].localeCompare(b[0], 'ja'));
+        entries.sort((a, b) => a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0); // Unicode順
       }
 
       entries.forEach(([name, score]) => {
@@ -633,18 +633,16 @@
       const keyword = document.getElementById('filterInput').value.trim();
 
       // 並び順表示とボタンラベルを更新
-      sortStatus.textContent = sortByScore ? '現在の並び順：点数昇順' : '現在の並び順：UNICODE順';
-      sortToggleBtn.textContent = sortByScore ? 'UNICODE順に並べる' : '点数で昇順に並べる';
+      sortStatus.textContent = sortByScore ? '現在の並び順：点数昇順' : '現在の並び順：Unicode順';
+      sortToggleBtn.textContent = sortByScore ? 'Unicode順に並べる' : '点数で昇順に並べる';
 
       renderTable(keyword);
     });
 
-    // 初期表示（UNICODE順）
-    sortStatus.textContent = '現在の並び順：UNICODE順';
+    // 初期表示（Unicode順）
+    sortStatus.textContent = '現在の並び順：Unicode順';
     sortToggleBtn.textContent = '点数で昇順に並べる';
     renderTable();
   </script>
 </body>
 </html>
-
-
