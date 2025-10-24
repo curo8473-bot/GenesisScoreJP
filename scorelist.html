@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>点数表</title>
+  <title>遊戯王Genesys点数表(日本語) 2025/9/25版</title>
   <style>
     body {
       font-family: sans-serif;
@@ -34,9 +34,9 @@
   </style>
 </head>
 <body>
-  <h1>カード点数表</h1>
+  <h1>遊戯王Genesys点数表(日本語) 2025/9/25版</h1>
   <input type="text" id="filterInput" placeholder="カード名で検索...">
-
+<label><input type="checkbox" id="sortCheckbox"> 点数で昇順に並べる</label>
   <table id="scoreTable">
     <thead>
       <tr><th>カード名</th><th>点数</th></tr>
@@ -589,21 +589,32 @@
 
     const tableBody = document.getElementById('tableBody');
 
-    function renderTable(filter = '') {
-      tableBody.innerHTML = '';
-      const entries = Object.entries(cardData);
-      entries.forEach(([name, score]) => {
-        if (name.includes(filter)) {
-          const row = `<tr><td>${name}</td><td>${score}</td></tr>`;
-          tableBody.innerHTML += row;
-        }
-      });
-    }
+function renderTable(filter = '') {
+  tableBody.innerHTML = '';
+  let entries = Object.entries(cardData);
 
-    document.getElementById('filterInput').addEventListener('input', function() {
-      const keyword = this.value.trim();
-      renderTable(keyword);
-    });
+  // フィルター処理
+  entries = entries.filter(([name]) => name.includes(filter));
+
+  // 昇順ソートチェック
+  const sortChecked = document.getElementById('sortCheckbox').checked;
+  if (sortChecked) {
+    entries.sort((a, b) => a[1] - b[1]); // 点数で昇順
+  }
+
+  // 表描画
+  entries.forEach(([name, score]) => {
+    const row = `<tr><td>${name}</td><td>${score}</td></tr>`;
+    tableBody.innerHTML += row;
+  });
+}
+
+
+document.getElementById('sortCheckbox').addEventListener('change', function() {
+  const keyword = document.getElementById('filterInput').value.trim();
+  renderTable(keyword);
+});
+
 
     // 初期表示
     renderTable();
