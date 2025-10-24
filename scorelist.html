@@ -60,7 +60,8 @@
   </table>
 
   <script>
-    const cardData = {"古代の機械像": 33,
+    const cardData = {
+"古代の機械像": 33,
 "赫の聖女カルテシア": 3,
 "アルカナフォースⅩⅩⅠ－THE WORLD": 100,
 "アストラル・クリボー": 3,
@@ -601,45 +602,42 @@
 
     const tableBody = document.getElementById('tableBody');
     const sortStatus = document.getElementById('sortStatus');
+    const sortToggleBtn = document.getElementById('sortToggleBtn');
     let sortByScore = false;
 
     function renderTable(filter = '') {
       tableBody.innerHTML = '';
       let entries = Object.entries(cardData);
 
-      // フィルター
       entries = entries.filter(([name]) => name.includes(filter));
 
-      // 並び順
       if (sortByScore) {
         entries.sort((a, b) => a[1] - b[1]);
         sortStatus.textContent = '現在の並び順：点数昇順';
+        sortToggleBtn.textContent = '五十音順に並べる';
       } else {
         entries.sort((a, b) => a[0].localeCompare(b[0], 'ja'));
         sortStatus.textContent = '現在の並び順：五十音順';
+        sortToggleBtn.textContent = '点数で昇順に並べる';
       }
 
-      // 表描画
       entries.forEach(([name, score]) => {
         const row = `<tr><td>${name}</td><td>${score}</td></tr>`;
         tableBody.innerHTML += row;
       });
     }
 
-    // 検索イベント
     document.getElementById('filterInput').addEventListener('input', function() {
       const keyword = this.value.trim();
       renderTable(keyword);
     });
 
-    // 並び順切り替えボタン
-    document.getElementById('sortToggleBtn').addEventListener('click', function() {
+    sortToggleBtn.addEventListener('click', function() {
       sortByScore = !sortByScore;
       const keyword = document.getElementById('filterInput').value.trim();
       renderTable(keyword);
     });
 
-    // 初期表示
     renderTable();
   </script>
 </body>
