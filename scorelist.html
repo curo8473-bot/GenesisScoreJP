@@ -30,16 +30,18 @@
     }
     th {
       background: #eee;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
   <h1>遊戯王Genesys点数表(日本語) 2025/9/25版</h1>
   <input type="text" id="filterInput" placeholder="カード名で検索...">
-<label><input type="checkbox" id="sortCheckbox"> 点数で昇順に並べる</label>
+  <label><input type="checkbox" id="sortCheckbox"> 点数で昇順に並べる</label>
+
   <table id="scoreTable">
     <thead>
-      <tr><th>カード名</th><th>点数</th></tr>
+      <tr><th>カード名</th><th id="scoreHeader">点数</th></tr>
     </thead>
     <tbody id="tableBody">
       <!-- JavaScriptで挿入される -->
@@ -588,35 +590,42 @@
     };
 
     const tableBody = document.getElementById('tableBody');
+    let sortAscending = true;
 
-function renderTable(filter = '') {
-  tableBody.innerHTML = '';
-  let entries = Object.entries(cardData);
+    function renderTable(filter = '') {
+      tableBody.innerHTML = '';
+      let entries = Object.entries(cardData);
 
-  // フィルター処理
-  entries = entries.filter(([name]) => name.includes(filter));
+      entries = entries.filter(([name]) => name.includes(filter));
 
-  // 昇順ソートチェック
-  const sortChecked = document.getElementById('sortCheckbox').checked;
-  if (sortChecked) {
-    entries.sort((a, b) => a[1] - b[1]); // 点数で昇順
-  }
+      const sortChecked = document.getElementById('sortCheckbox').checked;
+      if (sortChecked || !sortAscending) {
+        entries.sort((a, b) => sortAscending ? a[1] - b[1] : b[1] - a[1]);
+      }
 
-  // 表描画
-  entries.forEach(([name, score]) => {
-    const row = `<tr><td>${name}</td><td>${score}</td></tr>`;
-    tableBody.innerHTML += row;
-  });
-}
+      entries.forEach(([name, score]) => {
+        const row = `<tr><td>${name}</td><td>${score}</td></tr>`;
+        tableBody.innerHTML += row;
+      });
+    }
 
+    document.getElementById('filterInput').addEventListener('input', function() {
+      const keyword = this.value.trim();
+      renderTable(keyword);
+    });
 
-document.getElementById('sortCheckbox').addEventListener('change', function() {
-  const keyword = document.getElementById('filterInput').value.trim();
-  renderTable(keyword);
-});
+    document.getElementById('sortCheckbox').addEventListener('change', function() {
+      const keyword = document.getElementById('filterInput').value.trim();
+      sortAscending = true;
+      renderTable(keyword);
+    });
 
+    document.getElementById('scoreHeader').addEventListener('click', function() {
+      sortAscending = !sortAscending;
+      const keyword = document.getElementById('filterInput').value.trim();
+      renderTable(keyword);
+    });
 
-    // 初期表示
     renderTable();
   </script>
 </body>
