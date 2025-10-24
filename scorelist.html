@@ -603,7 +603,7 @@
     const tableBody = document.getElementById('tableBody');
     const sortStatus = document.getElementById('sortStatus');
     const sortToggleBtn = document.getElementById('sortToggleBtn');
-    let sortByScore = false;
+    let sortByScore = false; // 初期状態：五十音順
 
     function renderTable(filter = '') {
       tableBody.innerHTML = '';
@@ -612,9 +612,9 @@
       entries = entries.filter(([name]) => name.includes(filter));
 
       if (sortByScore) {
-        entries.sort((a, b) => a[1] - b[1]); // 点数昇順
+        entries.sort((a, b) => a[1] - b[1]);
       } else {
-        entries.sort((a, b) => a[0].localeCompare(b[0], 'ja')); // 五十音順
+        entries.sort((a, b) => a[0].localeCompare(b[0], 'ja'));
       }
 
       entries.forEach(([name, score]) => {
@@ -639,7 +639,9 @@
       renderTable(keyword);
     });
 
-    // 初期表示
+    // 初期表示（五十音順）
+    sortStatus.textContent = '現在の並び順：五十音順';
+    sortToggleBtn.textContent = '点数で昇順に並べる';
     renderTable();
   </script>
 </body>
